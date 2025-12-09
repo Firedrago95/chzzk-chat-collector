@@ -34,7 +34,6 @@ public class ChzzkApiClient {
         }
 
         String chatChannelId = response.content().chatChannelId();
-        System.out.println("chatChannelID = " + chatChannelId);
         return chatChannelId;
     }
 
