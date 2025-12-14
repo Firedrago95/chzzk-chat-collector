@@ -1,6 +1,6 @@
-package io.github.hypecycle.chzzk.connector.chzzk;
+package io.github.hypecycle.chatpipeline.connector.chzzk;
 
-import io.github.hypecycle.chzzk.global.ChzzkPipelineException;
+import io.github.hypecycle.chatpipeline.global.ChzzkPipelineException;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;

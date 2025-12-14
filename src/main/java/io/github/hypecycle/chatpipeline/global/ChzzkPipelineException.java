@@ -1,6 +1,4 @@
-package io.github.hypecycle.chzzk.global;
-
-import lombok.Getter;
+package io.github.hypecycle.chatpipeline.global;
 
 public class ChzzkPipelineException extends RuntimeException {
 

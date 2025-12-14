@@ -1,9 +1,9 @@
-package io.github.hypecycle.chzzk.connector.chzzk;
+package io.github.hypecycle.chatpipeline.connector.chzzk;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.hypecycle.chzzk.connector.chzzk.dto.request.ChzzkAuthRequest;
+import io.github.hypecycle.chatpipeline.connector.chzzk.dto.request.ChzzkAuthRequest;
 import java.net.URI;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;

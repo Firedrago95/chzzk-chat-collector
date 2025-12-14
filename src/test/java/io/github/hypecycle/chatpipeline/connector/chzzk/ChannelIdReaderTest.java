@@ -1,10 +1,10 @@
-package io.github.hypecycle.chzzk.connector.chzzk;
+package io.github.hypecycle.chatpipeline.connector.chzzk;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import io.github.hypecycle.chzzk.global.ChzzkPipelineException;
-import io.github.hypecycle.chzzk.global.ErrorCode;
+import io.github.hypecycle.chatpipeline.global.ChzzkPipelineException;
+import io.github.hypecycle.chatpipeline.global.ErrorCode;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;

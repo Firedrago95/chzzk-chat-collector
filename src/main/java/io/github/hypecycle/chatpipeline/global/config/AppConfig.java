@@ -1,6 +1,6 @@
-package io.github.hypecycle.chzzk.global.config;
+package io.github.hypecycle.chatpipeline.global.config;
 
-import io.github.hypecycle.chzzk.connector.chzzk.ChannelIdReader;
+import io.github.hypecycle.chatpipeline.connector.chzzk.ChannelIdReader;
 import java.util.Scanner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

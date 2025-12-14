@@ -1,7 +1,7 @@
-package io.github.hypecycle.chzzk.connector.chzzk;
+package io.github.hypecycle.chatpipeline.connector.chzzk;
 
-import io.github.hypecycle.chzzk.global.ChzzkPipelineException;
-import io.github.hypecycle.chzzk.global.ErrorCode;
+import io.github.hypecycle.chatpipeline.global.ChzzkPipelineException;
+import io.github.hypecycle.chatpipeline.global.ErrorCode;
 import java.util.Scanner;
 import lombok.RequiredArgsConstructor;
 

@@ -1,4 +1,4 @@
-package io.github.hypecycle.chzzk.global;
+package io.github.hypecycle.chatpipeline.global;
 
 import lombok.Getter;
 

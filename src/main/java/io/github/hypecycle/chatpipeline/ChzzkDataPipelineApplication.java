@@ -1,4 +1,4 @@
-package io.github.hypecycle.chzzk;
+package io.github.hypecycle.chatpipeline;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

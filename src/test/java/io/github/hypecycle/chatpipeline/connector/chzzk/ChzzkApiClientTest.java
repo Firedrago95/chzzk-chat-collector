@@ -1,12 +1,12 @@
-package io.github.hypecycle.chzzk.connector.chzzk;
+package io.github.hypecycle.chatpipeline.connector.chzzk;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
-import io.github.hypecycle.chzzk.global.ChzzkPipelineException;
-import io.github.hypecycle.chzzk.global.ErrorCode;
+import io.github.hypecycle.chatpipeline.global.ChzzkPipelineException;
+import io.github.hypecycle.chatpipeline.global.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
