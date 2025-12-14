@@ -1,9 +1,11 @@
 package io.github.hypecycle.chatpipeline.connector.chzzk;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.hypecycle.chatpipeline.connector.chzzk.dto.request.ChzzkAuthRequest;
+import io.github.hypecycle.chatpipeline.connector.chzzk.dto.response.ChzzkCommand;
+import io.github.hypecycle.chatpipeline.connector.chzzk.dto.response.ChzzkResponseMessage;
+import io.github.hypecycle.chatpipeline.domain.ChatMessage;
 import java.net.URI;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -16,13 +18,16 @@ public class ChzzkWebsocketClient extends WebSocketClient {
     private final String chatChannelId;
     private final String accessToken;
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ChzzkMessageMapper chzzkMessageMapper;
 
     private ScheduledExecutorService pingScheduler;
 
-    public ChzzkWebsocketClient(URI serverUri, String chatChannelId, String accessToken) {
+    public ChzzkWebsocketClient(URI serverUri, String chatChannelId, String accessToken,
+            ChzzkMessageMapper chzzkMessageMapper) {
         super(serverUri);
         this.chatChannelId = chatChannelId;
         this.accessToken = accessToken;
+        this.chzzkMessageMapper = chzzkMessageMapper;
     }
 
     @Override
@@ -43,31 +48,23 @@ public class ChzzkWebsocketClient extends WebSocketClient {
     @Override
     public void onMessage(String message) {
         try {
-            JsonNode node = objectMapper.readTree(message);
-            int cmd = node.get("cmd").asInt();
+            ChzzkResponseMessage response = objectMapper.readValue(message,
+                    ChzzkResponseMessage.class);
 
-            switch (cmd) {
-                case 0:
+            switch (response.cmd()) {
+                case PING:
                     System.out.println("<<< 서버 Ping 수신 (cmd: 0)");
                     sendPong(); // "응 살아있어" (Pong) 대답
                     break;
 
-                case 10000: // [서버 -> 나] ㅇㅇ 너 살아있네 (내 핑에 대한 대답)
+                case PONG: // [서버 -> 나] ㅇㅇ 너 살아있네 (내 핑에 대한 대답)
                     System.out.println("<<< [수신] 서버 Pong(cmd: 10000) - 내 핑에 대답함");
                     break;
 
-                case 93101: // 채팅 메시지
-                    JsonNode bdy = node.get("bdy");
-
-                    if (bdy != null && bdy.isArray()) {
-                        for (JsonNode chatItem : bdy) {
-                            // 1. 채팅 내용 추출
-                            String messageType = chatItem.path("msgTypeCode").asText();
-                            String content = chatItem.path("msg").asText();
-
-                            // 3. 콘솔 출력 (형식: [***] 내용)
-                            System.out.println("[****] " + content);
-                        }
+                case CHAT: // 채팅 메시지
+                    for (ChzzkResponseMessage.Body chatItem : response.bdy()) {
+                        ChatMessage chatMessage = chzzkMessageMapper.parse(chatItem);
+                        System.out.println(chatMessage);
                     }
                     break;
 

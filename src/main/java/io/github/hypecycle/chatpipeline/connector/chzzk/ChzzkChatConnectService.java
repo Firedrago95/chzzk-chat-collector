@@ -12,6 +12,7 @@ public class ChzzkChatConnectService implements CommandLineRunner {
 
     private final ChannelIdReader channelIdReader;
     private final ChzzkApiClient chzzkApiClient;
+    private final ChzzkMessageMapper chzzkMessageMapper;
 
     @Override
     public void run(String... args) throws Exception {
@@ -21,9 +22,10 @@ public class ChzzkChatConnectService implements CommandLineRunner {
             String accessToken = chzzkApiClient.getAccessToken(chatChannelId);
 
             URI socketUri = new URI("wss://kr-ss1.chat.naver.com/chat");
-            ChzzkWebsocketClient socketClient = new ChzzkWebsocketClient(socketUri, chatChannelId, accessToken);
+            ChzzkWebsocketClient socketClient = new ChzzkWebsocketClient(socketUri, chatChannelId,
+                    accessToken, chzzkMessageMapper);
 
-            socketClient.connect(); // 비동기 연결 시작
+            socketClient.connect();
 
         } catch (ChzzkPipelineException e) {
             System.out.println(e.getMessage());
