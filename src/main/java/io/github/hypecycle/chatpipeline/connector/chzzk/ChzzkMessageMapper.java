@@ -13,12 +13,14 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class ChzzkMessageMapper {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
 
     public ChatMessage parse(ChzzkResponseMessage.Body content) {
         try {
@@ -27,12 +29,12 @@ public class ChzzkMessageMapper {
             Map<String, Object> headers = extractHeaders(content.extras(), messageType);
 
             return new ChatMessage(
-                    Platform.CHZZK,
-                    messageType,
-                    author,
-                    content.msg(),
-                    toLocalDateTime(content.msgTime()),
-                    headers
+                Platform.CHZZK,
+                messageType,
+                author,
+                content.msg(),
+                toLocalDateTime(content.msgTime()),
+                headers
             );
 
         } catch (JsonProcessingException e) {
@@ -43,8 +45,8 @@ public class ChzzkMessageMapper {
     private Author toAuthor(String profileJson) throws JsonProcessingException {
         JsonNode profile = objectMapper.readTree(profileJson);
         return new Author(
-                profile.get("userIdHash").asText(),
-                profile.get("nickname").asText()
+            profile.get("userIdHash").asText(),
+            profile.get("nickname").asText()
         );
     }
 
@@ -53,11 +55,12 @@ public class ChzzkMessageMapper {
     }
 
     private LocalDateTime toLocalDateTime(long epochMillis) {
-        return LocalDateTime.ofInstant(Instant.ofEpochMilli(epochMillis), ZoneId.systemDefault());
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(epochMillis),
+            ZoneId.systemDefault());
     }
 
     private Map<String, Object> extractHeaders(String extrasJson, MessageType messageType)
-            throws JsonProcessingException {
+        throws JsonProcessingException {
         Map<String, Object> headers = new HashMap<>();
         JsonNode extras = objectMapper.readTree(extrasJson);
 
@@ -81,9 +84,6 @@ public class ChzzkMessageMapper {
         }
         if (extras.has("isAnonymous")) {
             headers.put("isAnonymous", extras.get("isAnonymous").asBoolean());
-        }
-        if (extras.has("donationId")) {
-            headers.put("donationId", extras.get("donationId").asText());
         }
     }
 }

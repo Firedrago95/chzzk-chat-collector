@@ -1,36 +1,39 @@
 package io.github.hypecycle.chatpipeline.connector.chzzk;
 
 import io.github.hypecycle.chatpipeline.global.ChzzkPipelineException;
-import java.net.URI;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ChzzkChatConnectService implements CommandLineRunner {
 
     private final ChannelIdReader channelIdReader;
     private final ChzzkApiClient chzzkApiClient;
-    private final ChzzkMessageMapper chzzkMessageMapper;
+    private final ObjectProvider<ChzzkWebsocketClient> websocketClientProvider;
 
     @Override
     public void run(String... args) throws Exception {
-        try {
-            String channelId = channelIdReader.readChannelId();
-            String chatChannelId = chzzkApiClient.getChatChannelId(channelId);
-            String accessToken = chzzkApiClient.getAccessToken(chatChannelId);
+        while (!Thread.currentThread().isInterrupted()) {
+            try {
+                String channelId = channelIdReader.readChannelId();
+                String chatChannelId = chzzkApiClient.getChatChannelId(channelId);
+                String accessToken = chzzkApiClient.getAccessToken(chatChannelId);
 
-            URI socketUri = new URI("wss://kr-ss1.chat.naver.com/chat");
-            ChzzkWebsocketClient socketClient = new ChzzkWebsocketClient(socketUri, chatChannelId,
-                    accessToken, chzzkMessageMapper);
+                ChzzkWebsocketClient socketClient = websocketClientProvider.getObject(chatChannelId,
+                    accessToken);
+                socketClient.connectBlocking();
+                break;
 
-            socketClient.connect();
-
-        } catch (ChzzkPipelineException e) {
-            System.out.println(e.getMessage());
-            run(args);
+            } catch (ChzzkPipelineException e) {
+                log.error(e.getMessage());
+                TimeUnit.SECONDS.sleep(3);
+            }
         }
     }
-
 }

@@ -1,3 +1,6 @@
 spring:
   application:
     name: Chzzk Data Pipeline
+chzzk:
+  websocket:
+    url: wss://kr-ss1.chat.naver.com/chat
