@@ -42,14 +42,24 @@ class ChzzkChatConnectServiceTest {
             websocketClient);
 
         // when
-        // run 메서드는 무한 루프이므로, 특정 조건에서 멈추도록 예외를 발생시킨다.
-        doThrow(new RuntimeException("Test finished")).when(websocketClient).connectBlocking();
+        // run 메서드는 무한 루프이므로, 별도의 스레드에서 실행하고 인터럽트하여 종료시킨다.
+        Thread serviceThread = new Thread(() -> {
+            try {
+                connectService.run();
+            } catch (Exception e) {
+                // 테스트를 위해 예상된 예외 처리
+            }
+        });
+        serviceThread.start();
 
-        try {
-            connectService.run();
-        } catch (RuntimeException e) {
-            assertThat(e.getMessage()).isEqualTo("Test finished");
-        }
+        // 서비스 스레드가 시작하고 connectBlocking()까지 실행되도록 잠시 대기
+        Thread.sleep(100);
+
+        // 서비스 스레드를 인터럽트하여 무한 루프에서 벗어나도록 시도
+        serviceThread.interrupt();
+
+        // 서비스 스레드가 종료될 때까지 잠시 대기
+        serviceThread.join(2000); // 최대 2초 대기
 
         // Then
         verify(channelIdReader).readChannelId();
