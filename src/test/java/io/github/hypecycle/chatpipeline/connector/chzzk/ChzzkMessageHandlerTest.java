@@ -1,35 +1,27 @@
 package io.github.hypecycle.chatpipeline.connector.chzzk;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.hypecycle.chatpipeline.buffer.ChatBuffer;
 import io.github.hypecycle.chatpipeline.connector.chzzk.dto.response.ChzzkCommand;
 import io.github.hypecycle.chatpipeline.connector.chzzk.dto.response.ChzzkResponseMessage;
-import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
-@ExtendWith(MockitoExtension.class)
 class ChzzkMessageHandlerTest {
 
-    private ChzzkMessageHandler messageHandler;
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ChzzkMessageMapper messageMapper = new ChzzkMessageMapper(objectMapper);
 
-    @Mock
-    private ChzzkMessageMapper messageMapper;
-    @Mock
-    private ObjectMapper objectMapper;
+    private ChzzkMessageHandler messageHandler;
+    private ChatBuffer chatBuffer;
 
     @BeforeEach
     void setUp() {
-        messageHandler = new ChzzkMessageHandler(messageMapper, objectMapper);
+        chatBuffer = new ChatBuffer();
+        messageHandler = new ChzzkMessageHandler(messageMapper, objectMapper, chatBuffer);
     }
 
     @Test
@@ -38,8 +30,6 @@ class ChzzkMessageHandlerTest {
         String pingMessage = "{\"cmd\":0}";
         ChzzkResponseMessage pingResponse = new ChzzkResponseMessage(
             ChzzkCommand.PING, null, null, null);
-        when(objectMapper.readValue(pingMessage, ChzzkResponseMessage.class)).thenReturn(
-            pingResponse);
 
         // when
         Optional<String> result = messageHandler.handleMessage(pingMessage);
@@ -54,28 +44,25 @@ class ChzzkMessageHandlerTest {
         // given
         String chatMessageJson = """
             {
-              "cmd": 1,
+              "cmd": 93101,
               "bdy": [
                 {
                   "msg": "test message",
-                  "profile": "{}",
+                  "profile": "{\\"userIdHash\\": \\"123124\\", \\"nickname\\": \\"test\\"}",
                   "msgTypeCode": 1,
                   "msgTime": 1234567890,
                   "extras": "{}"
                 }
-              ]
+              ],
+              "tid": "1",
+              "cid": "test_cid"
             }
             """;
-        ChzzkResponseMessage.Body[] body = {
-            new ChzzkResponseMessage.Body("{}", "{}", "text message", 1, 1234567890)};
-        ChzzkResponseMessage chatResponse = new ChzzkResponseMessage(
-            ChzzkCommand.CHAT, "1","game", List.of(body));
-        when(objectMapper.readValue(anyString(), any(Class.class))).thenReturn(chatResponse);
 
         // when
         messageHandler.handleMessage(chatMessageJson);
 
         // then
-        verify(messageMapper).parse(any(ChzzkResponseMessage.Body.class));
+        assertThat(chatBuffer.poll().message()).isEqualTo("test message");
     }
 }
