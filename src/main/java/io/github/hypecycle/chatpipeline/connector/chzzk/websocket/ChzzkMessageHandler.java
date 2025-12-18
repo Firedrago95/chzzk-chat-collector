@@ -10,11 +10,8 @@ import io.github.hypecycle.chatpipeline.connector.chzzk.dto.response.ChzzkRespon
 import io.github.hypecycle.chatpipeline.connector.chzzk.mapper.ChzzkMessageMapper;
 import io.github.hypecycle.chatpipeline.domain.ChatMessage;
 import java.util.Optional;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.java_websocket.client.WebSocketClient;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -26,15 +23,6 @@ public class ChzzkMessageHandler {
     private final ObjectMapper objectMapper;
     private final ChatBuffer chatBuffer;
 
-    public void handleOpen(WebSocketClient client, String chatChannelId, String accessToken,
-        ScheduledExecutorService pingScheduler) {
-        log.info(">>> Websocket 연결 성공! 인증 패킷 전송 시작...");
-
-        String authPacket = createAuthPacket(chatChannelId, accessToken);
-        client.send(authPacket);
-
-        pingScheduler.scheduleAtFixedRate(() -> sendActivePing(client), 20, 20, TimeUnit.SECONDS);
-    }
 
     public Optional<String> handleMessage(String message) {
         try {
@@ -68,26 +56,6 @@ public class ChzzkMessageHandler {
         } catch (Exception e) {
             log.error("메시지 파싱 실패: {}", message, e);
             return Optional.empty();
-        }
-    }
-
-    public void handleClose(String reason, ScheduledExecutorService pingScheduler) {
-        log.info(">>> 연결 끊김: {}", reason);
-        if (pingScheduler != null && !pingScheduler.isShutdown()) {
-            pingScheduler.shutdown();
-        }
-    }
-
-    public void handleError(Exception ex) {
-        log.error("Websocket 오류 발생", ex);
-    }
-
-    private void sendActivePing(WebSocketClient client) {
-        String pingPacket = "{\"cmd\": 0, \"ver\": 2}";
-        try {
-            client.send(pingPacket);
-        } catch (Exception e) {
-            log.error("Heartbeat 전송 실패", e);
         }
     }
 
