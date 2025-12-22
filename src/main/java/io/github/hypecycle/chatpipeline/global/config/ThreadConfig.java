@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 @Configuration
-public class AppConfig {
+public class ThreadConfig {
 
     @Bean
     public ChannelIdReader channelIdReader() {
@@ -41,5 +41,4 @@ public class AppConfig {
         executor.initialize();
         return executor;
     }
-
 }

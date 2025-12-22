@@ -1,6 +1,13 @@
 spring:
   application:
     name: Chzzk Data Pipeline
+
 chzzk:
   websocket:
     url: wss://kr-ss1.chat.naver.com/chat
+
+ollama:
+  base-url: http://localhost:11434 # ollama 기본 포트 (11434)
+  model-name: exaone3.5:7.8b # 터미널에서 ollama list 확인
+  connect-timeout: 1000ms # 연결 대기 시간 (ConnectTimeoutException)
+  read-timeout: 30s # 응답 대기 시간 (ReadTimeoutException)
