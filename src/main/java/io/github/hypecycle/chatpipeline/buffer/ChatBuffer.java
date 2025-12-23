@@ -20,22 +20,24 @@ public class ChatBuffer {
         log.info("[----] 현재 버퍼 대기 : {}", queue.size());
     }
 
-    public List<ChatMessage> drainBatch(int maxSize, long timeoutMs) throws InterruptedException {
+    public List<ChatMessage> drainBatch(int minSize, int maxSize, long timeoutMs) throws InterruptedException {
         List<ChatMessage> tempBatch = new ArrayList<>();
         tempBatch.add(queue.take());
 
         long deadLine = System.currentTimeMillis() + timeoutMs;
-        while (tempBatch.size() < maxSize) {
+        while (tempBatch.size() < minSize) {
             long remaining = deadLine - System.currentTimeMillis();
             if (remaining < 0) break;
 
             ChatMessage next = queue.poll(500, TimeUnit.MILLISECONDS);
             if (next == null) break;
             tempBatch.add(next);
-            if (!queue.isEmpty()) {
-                queue.drainTo(tempBatch, maxSize);
-            }
         }
+
+        if (tempBatch.size() < maxSize && !queue.isEmpty()) {
+            queue.drainTo(tempBatch, maxSize - tempBatch.size());
+        }
+
         return List.copyOf(tempBatch);
     }
 }
