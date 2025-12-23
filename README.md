@@ -3,6 +3,7 @@
 
 ## 아키텍처
 <img width="600" height="400" alt="image" src="https://github.com/user-attachments/assets/50c2b637-c91e-467f-badf-4aeb860d11c2" />
+<img width="1024" height="675" alt="1차mvp 다이어그램" src="https://github.com/user-attachments/assets/76a89b31-817f-41b1-a313-df451084b804" />
 
 
 ## 주요 기능:
