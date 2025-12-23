@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 public class ChatBuffer {
 
@@ -15,6 +17,7 @@ public class ChatBuffer {
 
     public void produce(ChatMessage chatMessage) {
         queue.offer(chatMessage);
+        log.info("[----] 현재 버퍼 대기 : {}", queue.size());
     }
 
     public List<ChatMessage> drainBatch(int maxSize, long timeoutMs) throws InterruptedException {

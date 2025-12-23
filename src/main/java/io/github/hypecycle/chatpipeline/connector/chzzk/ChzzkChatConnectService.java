@@ -9,9 +9,11 @@ import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 @Slf4j
+@Order(1)
 @Component
 @RequiredArgsConstructor
 public class ChzzkChatConnectService implements CommandLineRunner {
@@ -39,3 +41,4 @@ public class ChzzkChatConnectService implements CommandLineRunner {
         }
     }
 }
+

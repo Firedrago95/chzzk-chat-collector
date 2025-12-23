@@ -34,8 +34,8 @@ public class ThreadConfig {
     @Bean
     public ThreadPoolTaskExecutor chatWorkerThreadPoolTaskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(4);
-        executor.setMaxPoolSize(8);
+        executor.setCorePoolSize(1);
+        executor.setMaxPoolSize(1);
         executor.setQueueCapacity(150);
         executor.setThreadNamePrefix("chat-worker");
         executor.initialize();

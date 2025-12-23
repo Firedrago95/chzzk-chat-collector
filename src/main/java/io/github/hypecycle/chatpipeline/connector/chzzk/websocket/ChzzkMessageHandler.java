@@ -47,7 +47,7 @@ public class ChzzkMessageHandler {
                             Body bodyDto = objectMapper.treeToValue(node, Body.class);
                             ChatMessage chatMessage = chzzkMessageMapper.parse(bodyDto);
                             chatBuffer.produce(chatMessage);
-                            log.info(">>> {}", chatMessage);
+                            log.info("[ >> ] 수집: {}", chatMessage.message());
                         }
                     }
                     yield Optional.empty();
