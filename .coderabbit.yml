@@ -1,0 +1,30 @@
+# CodeRabbit 설정 파일
+version: "1.0"
+
+language: "ko-KR" # 리뷰 언어를 한국어로 설정
+
+reviews:
+  profile: "assertive" # 더 꼼꼼하고 엄격한 리뷰 (주니어 단계에서 성장에 도움됨)
+  request_changes_workflow: false
+  high_level_summary: true
+
+  # 프로젝트 성격에 맞춘 중점 검토 사항
+  instructions: >
+    당신은 Java/Spring Boot 기반의 데이터 엔지니어링 및 백엔드 전문가입니다. 
+    다음 사항들에 집중하여 리뷰를 진행해 주세요:
+    
+    1. **비동기 및 동시성 관리**: `ConcurrentLinkedQueue`, `@Async`, `ThreadPoolTaskExecutor` 사용 시 스레드 안전성(Thread-safety)과 데드락 위험이 없는지 확인해 주세요.
+    2. **데이터 파이프라인 효율성**: WebSocket에서 Buffer를 거쳐 Analyzer로 이어지는 흐름에서 병목 현상이 발생할 지점이나 메모리 누수(OOM) 가능성을 체크해 주세요.
+    3. **예외 처리의 일관성**: 프로젝트 전반에서 `ChzzkPipelineException`이 적절히 사용되었는지, 비동기 메서드 내부에서 예외가 소멸되지 않는지 확인해 주세요.
+    4. **테스트 코드**: 특히 Analyzer와 로직의 단위 테스트가 누락되지 않았는지, Mocking이 적절한지 검토해 주세요.
+    5. **Spring Boot 베스트 프랙티스**: 의존성 주입(DI), 불변 객체 사용, 적절한 인터페이스 분리 등 클린 코드 원칙을 준수하는지 확인해 주세요.
+
+# 특정 파일 제외 설정
+path_filters:
+  - "!build/**"
+  - "!.gradle/**"
+  - "!src/test/**" # 테스트 코드는 리뷰하되, 스타일 검사는 완화하고 싶다면 별도 분리 가능
+
+# 자동 리뷰 기능 활성화
+chat:
+  enabled: true
